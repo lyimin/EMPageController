@@ -21,10 +21,8 @@ import UIKit
     @objc optional func pageController(pageController: EMPageController, titleAtIndex index: Int) -> String?
     
     /// 返回控制器对应的自定义标题view
-    @objc optional func pageController(pageController: EMPageController, titleViewAtIndex index: Int) -> UIView?
+    @objc optional func pageController(pageController: EMPageController, titleViewAtIndex index: Int) -> UIView
 }
-
-
 
 @objc protocol EMPageControllerDelegate {
     
@@ -32,13 +30,16 @@ import UIKit
 
 
 
-class EMPageController: UIViewController {
+class EMPageController: UIViewController, EMPageControllerDataSource, EMPageControllerDelegate {
     
     // MARK: ***** LifeCycle *****
     override func viewDidLoad() {
         
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        dataSource = self
+        delegate = self
         
         if childControllerCount <= 0 { return }
     }
@@ -70,7 +71,8 @@ class EMPageController: UIViewController {
             if responds(to: Selector(("numberOfPageController:"))) {
                 
                 let count = dataSource!.numberOfPageController!(pageController: self)
-                return count > 0 ? count : 0
+                return max(0, count)
+//                return count > 0 ? count : 0
             }
             return 0
         }

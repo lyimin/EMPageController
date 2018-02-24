@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: EMPageController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,7 +19,19 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
     
+}
+
+extension ViewController {
+    
+    func numberOfPageController(pageController: EMPageController) -> Int {
+        return 10
+    }
+    
+    func pageController(pageController: EMPageController, titleViewAtIndex index: Int) -> UIView {
+        
+        let itemView = EMPageItemView(frame: CGRect(x: 100, y: 100, width: 50, height: 60))
+        return itemView
+    }
 }
 
