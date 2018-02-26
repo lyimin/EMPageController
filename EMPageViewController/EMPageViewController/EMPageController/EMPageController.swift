@@ -42,6 +42,8 @@ class EMPageController: UIViewController, EMPageControllerDataSource, EMPageCont
         delegate = self
         
         if childControllerCount <= 0 { return }
+        
+        initView()
     }
     
     // MARK: ***** Public Property *****
@@ -77,11 +79,46 @@ class EMPageController: UIViewController, EMPageControllerDataSource, EMPageCont
             return 0
         }
     }
+    
+    private lazy var menuView: EMMenuView = {
+        
+        var menuView = EMMenuView()
+        menuView.dataSource = self
+        return menuView
+    }()
+}
+
+// MARK: ***** EMMenuViewDelegate | EMMenuViewDataSource *****
+extension EMPageController: EMMenuViewDataSource {
+    
+    
+    func numberOfTitlesInMenuView(menuView: EMMenuView) -> Int {
+        return 0
+    }
+    
+    func menuView(menuView: EMMenuView, titleViewAtIndex index: Int) -> UIView? {
+        return titleViewAtIndex(index: index)
+    }
+    
 }
 
 
 // MARK: ***** Private Methods *****
 extension EMPageController {
     
+    private func initView() {
+        
+    }
     
+    private func titleViewAtIndex(index: Int) -> UIView? {
+        
+        guard dataSource != nil else { return nil }
+        
+        if responds(to: Selector(("pageController:"))) {
+            let itemView = dataSource!.pageController?(pageController: self, titleViewAtIndex: index)
+            return itemView
+        }
+        
+        return nil
+    }
 }

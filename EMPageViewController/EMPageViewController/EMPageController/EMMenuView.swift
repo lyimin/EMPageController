@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc protocol EMMenuDataSource {
+@objc protocol EMMenuViewDataSource {
     
     // 返回标题数量
     func numberOfTitlesInMenuView(menuView: EMMenuView) -> Int
@@ -17,7 +17,7 @@ import UIKit
     @objc optional func menuView(menuView: EMMenuView, titleAtIndex: Int) -> NSString
     
     // 返回自定义的view
-    func menuView(menuView: EMMenuView, titleViewAtIndex: Int) -> UIView
+    func menuView(menuView: EMMenuView, titleViewAtIndex: Int) -> UIView?
 }
 
 class EMMenuView: UIView {
@@ -41,7 +41,7 @@ class EMMenuView: UIView {
     
     // MARK: ***** Public Property *****
     
-    public weak var dataSource: EMMenuDataSource?
+    public weak var dataSource: EMMenuViewDataSource?
     
     // MARK: ***** Private Property *****
     
@@ -84,8 +84,11 @@ extension EMMenuView: UICollectionViewDelegateFlowLayout, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = UICollectionViewCell()
         let item = dataSource!.menuView(menuView: self, titleViewAtIndex: indexPath.row)
-        item.frame = cell.bounds
-        cell.addSubview(item)
+        
+        if let item = item {
+            item.frame = cell.bounds
+            cell.addSubview(item)
+        }
         
         return cell
     }
