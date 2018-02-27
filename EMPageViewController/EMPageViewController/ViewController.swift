@@ -33,5 +33,9 @@ extension ViewController {
         let itemView = EMPageItemView(frame: CGRect(x: 100, y: 100, width: 50, height: 60))
         return itemView
     }
+    
+    func pageController(pageController: EMPageController, preferredFrameForMenuView: EMMenuView) -> CGRect {
+        return CGRect(x: 0, y: 100, width: view.frame.width, height: 60)
+    }
 }
 

@@ -20,8 +20,13 @@ import UIKit
     /// 返回控制器对应的标题
     @objc optional func pageController(pageController: EMPageController, titleAtIndex index: Int) -> String?
     
+    
     /// 返回控制器对应的自定义标题view
+    /// 结合preferredFrameForMenuView方法一起使用
     @objc optional func pageController(pageController: EMPageController, titleViewAtIndex index: Int) -> UIView
+    
+    /// 返回菜单View的Frame
+    @objc optional func pageController(pageController: EMPageController, preferredFrameForMenuView: EMMenuView) -> CGRect
 }
 
 @objc protocol EMPageControllerDelegate {
@@ -44,7 +49,9 @@ class EMPageController: UIViewController, EMPageControllerDataSource, EMPageCont
         if childControllerCount <= 0 { return }
         
         initView()
+        calculateSize()
     }
+    
     
     // MARK: ***** Public Property *****
     
@@ -68,13 +75,11 @@ class EMPageController: UIViewController, EMPageControllerDataSource, EMPageCont
     // 控制器的数量
     private var childControllerCount: Int {
         get {
-            guard dataSource != nil else { return 0 }
             
-            if responds(to: Selector(("numberOfPageController:"))) {
+            if responds(to: #selector(EMPageControllerDataSource.numberOfPageController(pageController:))) {
                 
                 let count = dataSource!.numberOfPageController!(pageController: self)
                 return max(0, count)
-//                return count > 0 ? count : 0
             }
             return 0
         }
@@ -93,13 +98,12 @@ extension EMPageController: EMMenuViewDataSource {
     
     
     func numberOfTitlesInMenuView(menuView: EMMenuView) -> Int {
-        return 0
+        return childControllerCount
     }
     
     func menuView(menuView: EMMenuView, titleViewAtIndex index: Int) -> UIView? {
         return titleViewAtIndex(index: index)
     }
-    
 }
 
 
@@ -108,13 +112,26 @@ extension EMPageController {
     
     private func initView() {
         
+        view.addSubview(self.menuView)
+    }
+    
+    private func calculateSize() {
+        
+        // menuView
+        if responds(to: #selector(EMPageControllerDataSource.pageController(pageController:preferredFrameForMenuView:))) {
+            
+            let menuViewFrame = dataSource!.pageController!(pageController: self, preferredFrameForMenuView: menuView)
+            if menuViewFrame != CGRect.zero {
+                menuView.frame = menuViewFrame
+            } else {
+                menuView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 30)
+            }
+        }
     }
     
     private func titleViewAtIndex(index: Int) -> UIView? {
         
-        guard dataSource != nil else { return nil }
-        
-        if responds(to: Selector(("pageController:"))) {
+        if responds(to: #selector(EMPageControllerDataSource.pageController(pageController:titleViewAtIndex:))) {
             let itemView = dataSource!.pageController?(pageController: self, titleViewAtIndex: index)
             return itemView
         }
