@@ -13,13 +13,12 @@ import UIKit
     
     /// 返回控制器的数量
     @objc optional func numberOfPageController(pageController: EMPageController) -> Int
-    
+
     /// 返回Index对应的控制器
     @objc optional func pageController(pageController: EMPageController, atIndex index: Int) -> UIViewController?
     
     /// 返回控制器对应的标题
     @objc optional func pageController(pageController: EMPageController, titleAtIndex index: Int) -> String?
-    
     
     /// 返回控制器对应的自定义标题view
     /// 结合preferredFrameForMenuView方法一起使用
@@ -63,6 +62,10 @@ class EMPageController: UIViewController, EMPageControllerDataSource, EMPageCont
     
     // 控制器标题
     public var titles: Array<String>?
+    
+    public var backgroundColorSelected: UIColor = .blue
+
+    public var titleColorSelected: UIColor = .white
     
     // 自定义控制器标题
     public var titleViews: Array<UIView>?
